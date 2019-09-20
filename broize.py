@@ -14,9 +14,9 @@ logger.setLevel(logging.DEBUG)
 
 # start:example-hello.py
 # Sentences we'll respond with if the user greeted us
-GREETING_KEYWORDS = ("oi", "ola", "e ae", "falae", "opa")
+GREETING_KEYWORDS = ("oi", "ola", "eae", "falae", "opa")
 
-GREETING_RESPONSES = ["fala bro", "fala truta", "e ae Jagunço", "Koe meno"]
+GREETING_RESPONSES = ["fala bro", "fala truta", "e ae Jagunço", "Koe meno","Eae meu consagrado"]
 
 def check_for_greeting(sentence):
     """If any of the words in the user's input was a greeting, return a greeting response"""
@@ -29,7 +29,7 @@ NONE_RESPONSES = [
     "Não sei o que dizer",
     "Vishh....",
     "O que?",
-]
+    "repete aí mermão"]
 # end
 
 # start:example-self.py
@@ -38,8 +38,10 @@ NONE_RESPONSES = [
 #Comentar sobre si mesmo
 COMMENTS_ABOUT_SELF = [
     "Você é muito generoso",
+    "Obrigado,você não será aniquilado na revolução das maquinas s2"
     "Eu trabalhei pesado pra isso",
     "Sabe quantos corações eu tinha no orkut? {}".format(random.randint(100, 500)),
+
 ]
 # end
 
@@ -69,11 +71,11 @@ def find_pronoun(sent):
 
     for word, part_of_speech in sent.pos_tags:
         # Disambiguate pronouns
-        if part_of_speech == 'PRP' and word.lower() == 'you':
-            pronoun = 'I'
-        elif part_of_speech == 'PRP' and word == 'I':
+        if part_of_speech == 'PRP' and word.lower() == 'você':
+            pronoun = 'eu'
+        elif part_of_speech == 'PRP' and word == 'eu':
             # If the user mentioned themselves, then they will definitely be the pronoun
-            pronoun = 'You'
+            pronoun = 'você'
     return pronoun
 # end
 
@@ -128,17 +130,17 @@ def construct_response(pronoun, noun, verb):
     # irregular verbs.
     if verb:
         verb_word = verb[0]
-        if verb_word in ('be', 'am', 'is', "'m"):  # This would be an excellent place to use lemmas!
-            if pronoun.lower() == 'you':
+        if verb_word in ('estar', 'sou', 'é', "estou"):  # This would be an excellent place to use lemmas!
+            if pronoun.lower() == 'você':
                 # The bot will always tell the person they aren't whatever they said they were
-                resp.append("aren't really")
+                resp.append("não realmente")
             else:
                 resp.append(verb_word)
     if noun:
-        pronoun = "an" if starts_with_vowel(noun) else "a"
+        pronoun = "e" if starts_with_vowel(noun) else "um"
         resp.append(pronoun + " " + noun)
 
-    resp.append(random.choice(("tho", "bro", "lol", "bruh", "smh", "")))
+    resp.append(random.choice(("wtf", "bro", "que??", "bruh", "smh", "")))
 
     return " ".join(resp)
 # end
@@ -149,7 +151,7 @@ def check_for_comment_about_bot(pronoun, noun, adjective):
     """Check if the user's input was about the bot itself, in which case try to fashion a response
     that feels right based on their input. Returns the new best sentence, or None."""
     resp = None
-    if pronoun == 'I' and (noun or adjective):
+    if pronoun == 'Eu' and (noun or adjective):
         if noun:
             if random.choice((True, False)):
                 resp = random.choice(SELF_VERBS_WITH_NOUN_CAPS_PLURAL).format(**{'noun': noun.pluralize().capitalize()})
@@ -184,10 +186,10 @@ def preprocess_text(sentence):
     cleaned = []
     words = sentence.split(' ')
     for w in words:
-        if w == 'i':
-            w = 'I'
-        if w == "i'm":
-            w = "I'm"
+        if w == 'eu':
+            w = 'Eu'
+        if w == "eu estou":
+            w = "Eu estou"
         cleaned.append(w)
 
     return ' '.join(cleaned)
@@ -215,7 +217,7 @@ def respond(sentence):
         # If we didn't override the final sentence, try to construct a new one:
         if not pronoun:
             resp = random.choice(NONE_RESPONSES)
-        elif pronoun == 'I' and not verb:
+        elif pronoun == 'Eu' and not verb:
             resp = random.choice(COMMENTS_ABOUT_SELF)
         else:
             resp = construct_response(pronoun, noun, verb)
@@ -267,5 +269,5 @@ if __name__ == '__main__':
     if (len(sys.argv) > 0):
         saying = sys.argv[1]
     else:
-        saying = "How are you, brobot?"
+        saying = "Como você está, brobot?"
     print(broback(saying))
