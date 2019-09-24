@@ -12,6 +12,7 @@ logging.basicConfig()
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
+
 # start:example-hello.py
 # Sentences we'll respond with if the user greeted us
 GREETING_KEYWORDS = ("oi", "ola", "eae", "falae", "opa")
